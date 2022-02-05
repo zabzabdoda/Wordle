@@ -1,8 +1,6 @@
 import java.awt.Color;
-import java.awt.List;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,28 +12,51 @@ import javax.swing.JOptionPane;
 
 import processing.core.PApplet;
 
+
+/**
+ * Main window that contains the PApplet surface
+ * 
+ * @author zabzabdoda
+ *
+ */
 public class Window extends PApplet {
 	
+	// Keyboard letters at the bottom of the screen
 	private ArrayList<Key> letters;
+	// the backspace and enter key at the bottom of the screen
 	private Key backspace, enter;
+	// the words that are drawn on the screen
 	private Word[] words;
+	// the current guess the user is on
 	private int wordIndex;
+	// lists of Scrabble and common words that the key word is picked from
 	private HashSet<String> correctWords, commonWords;
+	// the key word
 	private String word;
+	// an instance of Random
 	private Random random;
+	// enables or disables typing after the game is done
 	private boolean lettersEnabled;
+	// the button to reset the game and generate a new word
 	private HitBox restartButton;
 	
+	
+	/**
+	 * Called once at start
+	 */
 	public void setup() {
 		random = new Random();
 		letters = new ArrayList<Key>();
+		//Reads in the word lists from text files
 		correctWords = readInWords("correctWords.txt");
 		commonWords = readInWords("commonWords.txt");
 		restartButton = new HitBox(150,550,100,30);
+		// sets the key word to be a random word from the commonWords list
 		word = (String) commonWords.toArray()[(random.nextInt(commonWords.size()))];
 		words = new Word[6];
 		wordIndex = 0;
 		lettersEnabled = true;
+		//initializes the words being drawn to the screen
 		for(int i = 0; i < 6; i++) {
 			words[i] = new Word(50,20+(i*60));
 		}
@@ -43,11 +64,16 @@ public class Window extends PApplet {
 		setupLetters();
 	}
 	
+	/**
+	 * Gets called once per frame
+	 */
 	public void draw() {
 		background(255);
+		//Draws all the keyboard letters
 		for(Key k : letters) {
 			k.draw(this);
 		}
+		//draws all the word boxes
 		for(Word w : words) {
 			w.draw(this);
 		}
@@ -60,15 +86,16 @@ public class Window extends PApplet {
 		this.fill(0);
 		this.text("Restart", 150,550,100,30);
 		this.popStyle();
-		//System.out.println(wordIndex);
-		
-		/*for(Word w : words) {
-			System.out.println(w.getFullWord());
-		}*/
 	}
 	
+	/**
+	 * Gets called when a mouse button is pressed
+	 */
+	@Override
 	public void mousePressed() {
+		//checks if the game is still going
 		if(lettersEnabled) {
+			//checks if the mouse position matches any of the keyboard keys
 			for(Key k : letters) {
 				if(k.getHitbox().intersect(mouseX, mouseY)) {
 					pressLetter(k.getLetter().charAt(0));
@@ -80,22 +107,34 @@ public class Window extends PApplet {
 				pressEnter();
 			}
 		}
+		//resets the game
 		if(restartButton.intersect(mouseX, mouseY)) {
 			setup();
 		}
 	}
 	
+	/**
+	 * Gets called when the enter button is pressed
+	 * submits the typed word for judging and checks
+	 * if the player won or lost
+	 * 
+	 */
 	public void pressEnter() {
+		// checks if the entered word is a real word based on the correctWords list
 		if(correctWords.contains(words[wordIndex].getFullWord())) {
+			// judges the word and returns a map of letters to their colors
 			HashMap<Character,Color> b = words[wordIndex].judgeWord(word);
 			for(Key l : letters) {
+				// sets the letter's color on the keyboard
 				if(b.get(l.getLetter().charAt(0)) != null) {
 					l.setColor(b.get(l.getLetter().charAt(0)));
 				}
 			}
+			// checks for win condition
 			if(b.values().toArray().equals(new Color[] {Color.GREEN,Color.GREEN,Color.GREEN,Color.GREEN,Color.GREEN})) {
 				lettersEnabled = false;
 				JOptionPane.showMessageDialog(null, "You won in "+(wordIndex+1)+" guesses!");
+			// checks for lose condition
 			}else if(wordIndex == 5) {
 				lettersEnabled = false;
 				JOptionPane.showMessageDialog(null, "Game over! the word was "+word);
@@ -105,14 +144,28 @@ public class Window extends PApplet {
 		}
 	}
 	
+	/**
+	 * Gets called when the backspace button
+	 * is pressed. Removes the last letter
+	 * typed
+	 */
 	public void pressBackspace() {
 		words[wordIndex].removeLetter();
 	}
 	
+	/**
+	 * adds a letter to the current word
+	 * @param letter the letter to be added
+	 */
 	public void pressLetter(char letter) {
 		words[wordIndex].addLetter(letter);
 	}
 
+	/**
+	 * Called when any key is pressed
+	 * checks if it is correct and then 
+	 * passes it on to pressLetter to add it to the word
+	 */
 	@Override
 	public void keyPressed() {
 		if(Character.isAlphabetic(key)) {
@@ -126,6 +179,9 @@ public class Window extends PApplet {
 		}
 	}
 	
+	/**
+	 * Sets up all the keyboard letters and their positions
+	 */
 	public void setupLetters() {
 		letters.add(new Key(50,400,25,25,"Q"));
 		letters.add(new Key(80,400,25,25,"W"));
@@ -160,6 +216,11 @@ public class Window extends PApplet {
 		enter = new Key(295,460,50,25,"Enter");
 	}
 	
+	/**
+	 * Reads a text file and returns a set of words
+	 * @param wordList the text file to read
+	 * @return the set of words from the file
+	 */
 	public HashSet<String> readInWords(String wordList) {
 		HashSet<String> words = new HashSet<String>();
 		try {

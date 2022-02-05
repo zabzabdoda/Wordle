@@ -5,9 +5,9 @@ import processing.core.PApplet;
 
 public class Word {
 	
+	// the current letter the player is on
 	private int currentLetterIndex;
 	private Letter[] letters;
-	private int x,y;
 	
 	public Word(int x, int y) {
 		currentLetterIndex = 0;
@@ -15,8 +15,6 @@ public class Word {
 		for(int i = 0; i < 5; i++) {
 			letters[i] = new Letter('_',x+(i*55),y);
 		}
-		this.x = x;
-		this.y = y;
 	}
 	
 	public String getFullWord() {
@@ -42,8 +40,7 @@ public class Word {
 	}
 	
 	public HashMap<Character,Color> judgeWord(String word) {
-		//List l = Arrays.asList(letters);
-		//check yellow words
+
 		HashMap<Character,Color> colors = new HashMap<Character,Color>();
 		for(int i = 0; i < word.length(); i++) {
 			if(word.contains(letters[i].getLetter()+"")) {

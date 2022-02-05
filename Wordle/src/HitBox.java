@@ -1,6 +1,3 @@
-import java.awt.Point;
-import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 
 import processing.core.PApplet;
 
@@ -27,11 +24,7 @@ public class HitBox {
 	    // To check if either rectangle is actually a line
 	    // For example :  l1 ={-1,0}  r1={1,1}  l2={0,-1}
 	    // r2={0,1}
-		Point l1 = new Point(this.x,this.y);
-		Point r1 = new Point(this.x+this.width,this.y+this.height);
 
-		Point l2 = new Point(other.x,other.y);
-		Point r2 = new Point(other.x+other.width,other.y+other.height);
 		return (Math.abs((this.x + this.width/2) - (other.x + other.width/2)) * 2 < (this.width + other.width)) &&
 		         (Math.abs((this.y + this.height/2) - (other.y + other.height/2)) * 2 < (this.height + other.height));
 	}
