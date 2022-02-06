@@ -54,6 +54,7 @@ public class Window extends PApplet {
 		// sets the key word to be a random word from the commonWords list
 		word = (String) commonWords.toArray()[(random.nextInt(commonWords.size()))];
 		words = new Word[6];
+		word = "CREEP";
 		wordIndex = 0;
 		lettersEnabled = true;
 		//initializes the words being drawn to the screen
@@ -131,11 +132,18 @@ public class Window extends PApplet {
 				}
 			}
 			// checks for win condition
-			if(b.values().toArray().equals(new Color[] {Color.GREEN,Color.GREEN,Color.GREEN,Color.GREEN,Color.GREEN})) {
-				lettersEnabled = false;
-				JOptionPane.showMessageDialog(null, "You won in "+(wordIndex+1)+" guesses!");
-			// checks for lose condition
-			}else if(wordIndex == 5) {
+			int count = 0;
+			for(Color c : b.values()) {
+				if(c.equals(Color.GREEN)) {
+					count++;
+				}
+				if(count == 5) {
+					lettersEnabled = false;
+					JOptionPane.showMessageDialog(null, "You won in "+(wordIndex+1)+" guesses!");
+					return;
+				}
+			}
+			if(wordIndex == 5) {
 				lettersEnabled = false;
 				JOptionPane.showMessageDialog(null, "Game over! the word was "+word);
 			}

@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import processing.core.PApplet;
@@ -40,7 +41,6 @@ public class Word {
 	}
 	
 	public HashMap<Character,Color> judgeWord(String word) {
-
 		HashMap<Character,Color> colors = new HashMap<Character,Color>();
 		for(int i = 0; i < word.length(); i++) {
 			if(word.contains(letters[i].getLetter()+"")) {
